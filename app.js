@@ -1,4 +1,4 @@
-//dino datas array
+// Dinos data array
 const rawDinoData = [
   {
     species: "Triceratops",
@@ -90,7 +90,7 @@ function DinoConstructor(dinoData, units) {
   }
 }
 
-// prototype dinosaur with methods
+// Prototype dinosaur with methods
 const protoDino = {
   // Create Dino Compare Method 1 for weight
   compareWeight: function (humanWeight) {
@@ -133,7 +133,7 @@ const protoDino = {
   },
 };
 
-//assign the prototype to the constructor
+// Assign the prototype to the constructor
 DinoConstructor.prototype = protoDino;
 
 // Create Dino Object arrays
@@ -175,12 +175,99 @@ function getHumanData() {
 }
 
 // Generate Tiles for each Dino in Array
+function createDinoElement(dinoData, humanData) {
+  let fact;
+  const randomNumber =
+    dinoData.species === "Pigeon" ? 2 : Math.round(Math.random() * 5);
 
-// Add tiles to DOM
+  switch (randomNumber) {
+    case 0:
+      fact = `The ${dinoData.species} lived in ${dinoData.where}.`;
+      break;
+    case 1:
+      fact = `The ${dinoData.species} lived in the ${dinoData.when} period.`;
+      break;
+    case 2:
+      fact = dinoData.fact;
+      break;
+    case 3:
+      fact = dinoData.compareWeight(humanData.weight);
+      break;
+    case 4:
+      fact = dinoData.compareHeight(humanData.height);
+      break;
+    case 5:
+      fact = dinoData.compareDiet(humanData.diet);
+      break;
+    default:
+      fact = "Dinosaurs are cool!";
+  }
 
-// Remove form from screen
+  // Create the new grid item with title, image, and chosen fact
+  const newDiv = document.createElement("div");
+  newDiv.className = "grid-item";
+  newDiv.innerHTML = `<h3>${
+    dinoData.species
+  }</h3><img src="images/${dinoData.species.toLowerCase()}.png" alt="image of ${
+    dinoData.species
+  }"><p>${fact}</p>`;
+
+  return newDiv;
+}
+
+function createHumanElement(humanData) {
+  // Create the human element for the grid, with user's name and an image
+  const newDiv = document.createElement("div");
+  newDiv.className = "grid-item";
+  newDiv.innerHTML = `<h3>${humanData.name}</h3><img src="images/human.png" alt="image of human">`;
+
+  return newDiv;
+}
+
+// Add tiles to DOM and remove form from screen
+function updateUI(dinoArray, humanData) {
+  document.querySelector("form").style.display = "none";
+
+  // Create fragment to attach div elements to
+  const fragment = document.createDocumentFragment();
+
+  // Call to create the dino and human div elements
+  for (let i = 0; i < 9; i++) {
+    // Center space (5th element, index 4) is always the human
+    let gridSquare =
+      i === 4
+        ? createHumanElement(humanData)
+        : createDinoElement(dinoArray[i], humanData);
+
+    fragment.appendChild(gridSquare);
+  }
+  document.getElementById("grid").appendChild(fragment);
+  // Show the 'Go Again' button
+  document.getElementById("repeat-btn").style.display = "block";
+}
 
 // On button click, prepare and display infographic
+function clicked(e) {
+  // Prevent default page reloading on submit
+  e.preventDefault();
+
+  const humanData = getHumanData();
+
+  const errorMessage = document.getElementById("error");
+  if (humanData.name === "") {
+    errorMessage.innerHTML = "<p>Please enter a name</p>";
+    return;
+  } else if (humanData.height < 1) {
+    errorMessage.innerHTML = "<p>Please enter a height more than 0</p>";
+    return;
+  } else if (humanData.weight < 1) {
+    errorMessage.innerHTML = "<p>Please enter a weight more than 0</p>";
+    return;
+  }
+
+  const dinoArray = createDinoArray(humanData.units);
+  updateUI(dinoArray, humanData);
+}
 
 // Change unit between metric and imperial for html display
 function unitsChange() {
@@ -192,3 +279,9 @@ function unitsChange() {
     document.getElementById("imperial-form").style.display = "block";
   }
 }
+
+// IIFE to attach the event listeners on the buttons
+(function () {
+  document.getElementById("btn").addEventListener("click", clicked);
+  document.getElementById("repeat-btn").addEventListener("click", repeat);
+})();
