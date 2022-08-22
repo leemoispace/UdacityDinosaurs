@@ -70,7 +70,7 @@ const rawDinoData = [
     diet: "herbivore",
     where: "Worldwide",
     when: "Holocene",
-    fact: "All birds are living dinosaurs.",
+    fact: "All birds are dinosaurs.",
   },
 ];
 
@@ -88,6 +88,12 @@ function DinoConstructor(dinoData, units) {
     this.weight = dinoData.weight;
     this.height = dinoData.height;
   }
+}
+
+// Helper for first letter capitalization
+function titleCase(str) {
+  newStr = str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
+  return newStr;
 }
 
 // Prototype dinosaur with methods
@@ -125,7 +131,7 @@ const protoDino = {
   // Create Dino Compare Method 3 for diet
   compareDiet: function (humanDiet) {
     const article = humanDiet === "omnivore" ? "an" : "a";
-    if (humanDiet === this.diet) {
+    if (humanDiet === titleCase(this.diet)) {
       return `You are ${article} ${humanDiet} and ${this.species} was too!`;
     } else {
       return `You are ${article} ${humanDiet}, but ${this.species} was a ${this.diet}.`;
@@ -246,6 +252,7 @@ function updateUI(dinoArray, humanData) {
   document.getElementById("repeat-btn").style.display = "block";
 }
 
+// Main functions
 // On button click, prepare and display infographic
 function clicked(e) {
   // Prevent default page reloading on submit
@@ -267,6 +274,14 @@ function clicked(e) {
 
   const dinoArray = createDinoArray(humanData.units);
   updateUI(dinoArray, humanData);
+}
+
+//Resets the UI elements to repeat
+function repeat() {
+  document.getElementById("error").innerHTML = "";
+  document.getElementById("grid").innerHTML = "";
+  document.getElementById("repeat-btn").style.display = "none";
+  document.querySelector("form").style.display = "block";
 }
 
 // Change unit between metric and imperial for html display
