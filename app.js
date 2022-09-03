@@ -146,11 +146,12 @@ DinoConstructor.prototype = protoDino;
 function createDinoArray(units) {
   const dinos = rawDinoData;
   const dinoArray = [];
+  const HUMAN_INDEX = 4;
   dinos.forEach(function (dino) {
     dinoArray.push(new DinoConstructor(dino, units));
   });
   // Insert the human placeholder here so that Human should be in the centre in the grid elements
-  dinoArray.splice(4, 0, "human placeholder");
+  dinoArray.splice(HUMAN_INDEX, 0, "human placeholder");
   return dinoArray;
 }
 // Create Human Object using data from form
@@ -234,9 +235,7 @@ function createHumanElement(humanData) {
 function updateUI(dinoArray, humanData) {
   document.querySelector("form").style.display = "none";
 
-  // Create fragment to attach div elements to
-  const fragment = document.createDocumentFragment();
-
+  const grid = document.getElementById("grid");
   // Call to create the dino and human div elements
   for (let i = 0; i < 9; i++) {
     // Center space (5th element, index 4) is always the human
@@ -244,10 +243,8 @@ function updateUI(dinoArray, humanData) {
       i === 4
         ? createHumanElement(humanData)
         : createDinoElement(dinoArray[i], humanData);
-
-    fragment.appendChild(gridSquare);
+    grid.appendChild(gridSquare);
   }
-  document.getElementById("grid").appendChild(fragment);
   // Show the 'Go Again' button
   document.getElementById("repeat-btn").style.display = "block";
 }
